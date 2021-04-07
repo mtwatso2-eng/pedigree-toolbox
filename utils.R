@@ -10,6 +10,10 @@ isOrnamental <- function(germplasmName){
   grepl("^[0-9-]*$", germplasmName)
 }
 
+isTerminal <- function(germplasmName){
+  all(getParents(germplasmName) %in% c(NA, "NA", ""))
+}
+
 getParents <- function(germplasmName){
   if(isOrnamental(germplasmName))
     germplasmName <- getCrossFromStandardFormat(germplasmName)
@@ -33,7 +37,10 @@ pedigree <- local(function(germplasmName){
           names(thisPedigree)[i] <- thisParents[i]
         }
         else{
-          thisPedigree[[i]] <- NA
+          if(i == 2 & !all(is.na(thisPedigree)))
+            thisPedigree[["OP"]] <- list(NA, NA)
+          else
+            thisPedigree[[i]] <- NA
         }
       }
     }

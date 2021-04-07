@@ -23,7 +23,7 @@ server <- function(input, output, session) {
   
   output$percentParents <- renderTable({
     validate(need((input$germplasmName != ""), ""))
-    validate(need((!all(is.na(getParents(input$germplasmName)))), "Terminal Parent or no Data"))
+    validate(need(!isTerminal(input$germplasmName), "Terminal parent or no data"))
     input$germplasmName %>% getPercentParents %>%
       scales::label_percent()(.) %>% as.list %>% data.frame(check.names = F)
   })
@@ -32,7 +32,7 @@ server <- function(input, output, session) {
   output$pedigreeTree <- renderCollapsibleTree({
     validate(need((input$germplasmName != ""), ""))
     withProgress(message = "Building pedigree tree",{
-      validate(need((!all(is.na(getParents(input$germplasmName)))), ""))
+      validate(need(!isTerminal(input$germplasmName), ""))
       collapsibleTree(fontSize = 20, linkLength = "200", collapsed = !input$collapsed,
         FromListSimple(pedigree(input$germplasmName)[[1]], nodeName = input$germplasmName)
       )
