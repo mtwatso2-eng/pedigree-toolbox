@@ -15,7 +15,8 @@ ui <- navbarPage(id = "tabs", collapsible = TRUE, title = "Pedigree Toolbox",
         tableOutput("percentParents"),
         collapsibleTreeOutput("pedigreeTree")
       )
-    )
+    ),
+    tags$head(tags$link(rel="shortcut icon", href="https://thumbs.dreamstime.com/b/sweet-potato-white-background-sweet-potato-batata-white-background-isolated-103677860.jpg"))
   )
   
 server <- function(input, output, session) {
