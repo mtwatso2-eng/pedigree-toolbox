@@ -21,18 +21,21 @@ ui <- navbarPage(id = "tabs", collapsible = TRUE, title = "Pedigree Toolbox",
 server <- function(input, output, session) {
   
   output$percentParents <- renderTable({
-    validate(need((input$germplasmName != ""),""))
+    validate(need((input$germplasmName != ""), ""))
     validate(need((!all(is.na(getParents(input$germplasmName)))), "Terminal Parent or no Data"))
     input$germplasmName %>% getPercentParents %>%
       scales::label_percent()(.) %>% as.list %>% data.frame(check.names = F)
   })
+    
   
   output$pedigreeTree <- renderCollapsibleTree({
-    validate(need((input$germplasmName != ""),""))
-    validate(need((!all(is.na(getParents(input$germplasmName)))), ""))
-    collapsibleTree(fontSize = 20, linkLength = "200", collapsed = !input$collapsed,
-      FromListSimple(pedigree(input$germplasmName)[[1]], nodeName = input$germplasmName)
-    )
+    validate(need((input$germplasmName != ""), ""))
+    withProgress(message = "Building pedigree tree",{
+      validate(need((!all(is.na(getParents(input$germplasmName)))), ""))
+      collapsibleTree(fontSize = 20, linkLength = "200", collapsed = !input$collapsed,
+        FromListSimple(pedigree(input$germplasmName)[[1]], nodeName = input$germplasmName)
+      )
+    })
   })
   
 }
