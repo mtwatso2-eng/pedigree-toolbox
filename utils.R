@@ -1,9 +1,12 @@
-isStandardFormat <- function(Code){
-  grepl("^[0-9]+-[0-9]+$", Code)
+isStandardFormat <- function(germplasmName){
+  grepl("^[0-9]+-[0-9]+$", germplasmName)
 }
 
-getCrossFromStandardFormat <- function(Code){
-  strsplit(Code, "-", fixed = T)[[1]][1]
+getCrossFromStandardFormat <- function(germplasmName){
+  germplasmName <- strsplit(germplasmName, "-", fixed = T)[[1]][1]
+  if(!is.na(as.numeric(germplasmName)))
+    germplasmName <- as.character(as.numeric(germplasmName))
+  return(germplasmName)
 }
 
 isOrnamental <- function(germplasmName){
