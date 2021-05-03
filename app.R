@@ -2,10 +2,11 @@ require(shiny); require(shinyBS)
 require(tidyverse); require(magrittr)
 require(rlist); require(data.tree); require(collapsibleTree)
 require(brapir)
+source("utils.R")
 parents <<- read.csv("parents.csv", stringsAsFactors = F) %>%
   rowwise() %>%
   mutate(Code = toGenericPedigreeCode(Code))
-source("utils.R")
+
 
 ui <- navbarPage(id = "tabs", collapsible = TRUE, title = "Pedigree Toolbox",
     tabPanel("Pedigree Viewer", 
