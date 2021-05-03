@@ -2,7 +2,9 @@ require(shiny); require(shinyBS)
 require(tidyverse); require(magrittr)
 require(rlist); require(data.tree); require(collapsibleTree)
 require(brapir)
-parents <<- read.csv("parents.csv", stringsAsFactors = F)
+parents <<- read.csv("parents.csv", stringsAsFactors = F) %>%
+  rowwise() %>%
+  mutate(Code = toGenericPedigreeCode(Code))
 source("utils.R")
 
 ui <- navbarPage(id = "tabs", collapsible = TRUE, title = "Pedigree Toolbox",
@@ -24,8 +26,10 @@ server <- function(input, output, session) {
   output$percentParents <- renderTable({
     validate(need((input$germplasmName != ""), ""))
     validate(need(!isTerminal(input$germplasmName), "Terminal parent or no data"))
-    input$germplasmName %>% getPercentParents %>%
+    withProgress(message = "Getting terminal parents",{
+      input$germplasmName %>% getPercentParents() %>%
       scales::label_percent()(.) %>% as.list %>% data.frame(check.names = F)
+    })
   })
     
   

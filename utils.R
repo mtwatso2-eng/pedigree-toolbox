@@ -2,15 +2,14 @@ isStandardFormat <- function(germplasmName){
   grepl("^[0-9]+-[0-9]+$", germplasmName)
 }
 
-getCrossFromStandardFormat <- function(germplasmName){
+toGenericPedigreeCode <- function(germplasmName){
+  germplasmName %<>% as.character()
+  if(!isStandardFormat(germplasmName))
+    return(germplasmName)
   germplasmName <- strsplit(germplasmName, "-", fixed = T)[[1]][1]
   if(!is.na(as.numeric(germplasmName)))
     germplasmName <- as.character(as.numeric(germplasmName))
   return(germplasmName)
-}
-
-isOrnamental <- function(germplasmName){
-  grepl("^[0-9-]*$", germplasmName)
 }
 
 isTerminal <- function(germplasmName){
@@ -18,11 +17,10 @@ isTerminal <- function(germplasmName){
 }
 
 getParents <- function(germplasmName){
-  if(isOrnamental(germplasmName))
-    germplasmName <- getCrossFromStandardFormat(germplasmName)
+  germplasmName %<>% toGenericPedigreeCode()
   germplasm <- parents %>% filter(Code == germplasmName)
   if(nrow(germplasm) > 0)
-    return(c(germplasm$Maternal, germplasm$Paternal))
+    return(c(germplasm$Maternal[1], germplasm$Paternal[1]))
   germplasmParents <- c(NA, NA)
   try(silent = T, {
     germplasmParents <- strsplit(brapi_get_germplasm(brapi_db()$sweetpotatobase, germplasmName = germplasmName)$pedigree, "/")[[1]]
